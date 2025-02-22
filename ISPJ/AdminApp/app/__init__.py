@@ -152,7 +152,6 @@ def metrics():
     return generate_latest()
 
 
-#Kenzie section:
 
 # Import database session
 from database import engine, Base, dbSession  # Ensure dbSession and engine are imported
