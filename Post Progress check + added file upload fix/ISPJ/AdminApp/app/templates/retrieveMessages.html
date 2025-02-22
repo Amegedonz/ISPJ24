@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Retrieve Messages{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="#">MedSync Admin</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link position-relative" href="{{ url_for('admin_notif') }}">Notifications</a>
+                </li>
+                <li class="nav-item">
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="/retrieveMessages">Retrieve Contact Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="/view_errors">Contact Us Error Log </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="http://localhost:8501">AI Error Log Analysis</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('admin_login') }}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<h1 class="display-4">Retrieve Messages</h1>
+<div>
+  {% if count == 0 %}
+  <p>There are no messages.</p>
+  {% elif count == 1 %}
+  <p>There is 1 message.</p>
+  {% else %}
+  <p>There are {{ count }} messages.</p>
+  {% endif %}
+</div>
+<div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Message</th>
+        <th>Screenshot</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+{% for message in messages_list %}
+<tr>
+    <td>{{ message.id }}</td>
+    <td>{{ message.name }}</td>
+    <td>{{ message.email }}</td>
+    <td>{{ message.message }}</td>
+    <td>
+      {% if message.screenshot %}
+      <img src="{{ url_for('uploaded_file', filename=message.screenshot) }}" alt="screenshot" width="100" onerror="this.onerror=null;this.src='/static/images/no-image.png';">
+    {% else %}
+          No screenshot
+      {% endif %}
+  </td>
+    <td>
+        <form action="{{ url_for('delete_messages', id=message.id) }}" method="POST">
+            <input type="hidden">
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#myModal_{{ message.id }}">
+              Delete
+            </button>
+            <div class="modal" id="myModal_{{ message.id }}">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title">Delete Confirmation</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    Are you sure you want to delete {{ message.name }} ({{ message.email }})?
+                  </div>
+                  <div class="modal-footer">
+                    <input type="submit" value="Delete" class="btn btn-danger">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </form>
+    </td>
+</tr>
+{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
